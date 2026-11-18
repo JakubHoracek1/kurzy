@@ -1,0 +1,11 @@
+# Databáze (vzniká automaticky při prvním běhu aplikace)
+database/kurzy.sqlite
+database/*.sqlite
+database/*.sqlite-journal
+
+# IDE
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store
