@@ -1,184 +1,626 @@
+/* ==========================================================================
+   Kurzy a přihlašování účastníků - styly
+   Soubor je rozdělený na sekce (proměnné, layout, karty, formuláře,
+   tlačítka, badge, tabulky, kartičky kurzů) - každá sekce má komentář,
+   co dělá a proč.
+   ========================================================================== */
+
 :root {
-    --color-bg: #f4f6f8;
+    /* :root = definice CSS proměnných platných pro celou stránku - díky
+       tomu se barvy nastavují na jednom místě a všude se jen odkazují. */
+    --color-bg: #f3f5fb;
+    /* Barva pozadí celé stránky - velmi světlá modro-šedá. */
     --color-surface: #ffffff;
-    --color-text: #1f2933;
-    --color-muted: #65748b;
-    --color-border: #dfe3e8;
-    --color-primary: #2f6fed;
-    --color-primary-dark: #1e4fbb;
-    --color-success-bg: #e6f6ec;
-    --color-success-text: #1f7a43;
-    --color-error-bg: #fdeaea;
-    --color-error-text: #b42318;
-    --color-warn-bg: #fff6e0;
-    --color-warn-text: #8a5a00;
-    --radius: 8px;
+    /* Barva "povrchu" - karty, hlavička, formuláře (bílá). */
+    --color-text: #1f2435;
+    /* Hlavní barva textu - tmavě modro-šedá (ne čistě černá, je to
+       jemnější pro oči). */
+    --color-muted: #6b7280;
+    /* Barva pro vedlejší/popisný text (např. "Žádné kurzy..."). */
+    --color-border: #e3e7f0;
+    /* Barva jemných ohraničení a oddělovačů. */
+    --color-primary: #5b5bf5;
+    /* Hlavní brand barva (fialovo-modrá) - tlačítka, odkazy, zvýraznění. */
+    --color-primary-dark: #3f3fd6;
+    /* Tmavší odstín hlavní barvy - pro hover efekt tlačítek. */
+    --gradient-primary: linear-gradient(135deg, #6a6af7 0%, #8b5cf6 100%);
+    /* Gradient (přechod barev) z modré do fialové - používá se na
+       hlavních tlačítkách a v nadpisu, aby aplikace nevypadala "ploše". */
+    --color-success-bg: #e3f8ec;
+    /* Pozadí zeleného (úspěch/aktivní) badge a hlášky. */
+    --color-success-text: #178a4c;
+    /* Text zeleného badge a hlášky. */
+    --color-error-bg: #fdeaec;
+    /* Pozadí červeného (chyba/zrušeno) badge a hlášky. */
+    --color-error-text: #c7294d;
+    /* Text červeného badge a hlášky. */
+    --color-completed-bg: #e8e9fb;
+    /* Pozadí fialového badge pro stav "absolvováno". */
+    --color-completed-text: #4338ca;
+    /* Text fialového badge pro stav "absolvováno". */
+    --radius: 14px;
+    /* Jednotné zaoblení rohů karet/tlačítek - pro konzistentní vzhled. */
+    --radius-sm: 8px;
+    /* Menší zaoblení pro drobné prvky (badge, malá tlačítka). */
+    --shadow-card: 0 1px 2px rgba(31, 36, 53, 0.04), 0 8px 24px rgba(31, 36, 53, 0.06);
+    /* Měkký, dvojitý stín pod kartami - vypadá to "vznešeněji" než
+       jeden tvrdý stín. */
+    --shadow-card-hover: 0 4px 10px rgba(31, 36, 53, 0.08), 0 16px 32px rgba(91, 91, 245, 0.12);
+    /* Výraznější stín, který se zobrazí při najetí myší na kartu
+       (efekt "karta se nadzvedne"). */
 }
 
-* { box-sizing: border-box; }
+* {
+    /* Hvězdička = univerzální selektor, platí pro VŠECHNY HTML elementy. */
+    box-sizing: border-box;
+    /* Padding a border se počítají DO šířky/výšky elementu, ne navíc -
+       díky tomu se layout nerozbíjí při přidání paddingu. */
+}
 
 body {
+    /* Styl celé viditelné plochy stránky. */
     margin: 0;
-    font-family: "Segoe UI", Arial, sans-serif;
+    /* Zruší výchozí okraj prohlížeče okolo stránky. */
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    /* Hlavní font - 'Inter' (načtený z Google Fonts v layout.php),
+       s náhradními fonty pro případ, že by se nenačetl. */
     background: var(--color-bg);
+    /* Pozadí stránky podle proměnné výše. */
     color: var(--color-text);
-    line-height: 1.5;
+    /* Barva textu podle proměnné výše. */
+    line-height: 1.55;
+    /* Řádkování - trochu vzdušnější text, lépe se čte. */
+    -webkit-font-smoothing: antialiased;
+    /* Jemnější vykreslení písma na macOS/Chrome. */
 }
 
+/* --------------------------------------------------------------------
+   Hlavička a navigace
+   -------------------------------------------------------------------- */
+
 header.app-header {
+    /* Horní lišta aplikace s logem a navigací. */
     background: var(--color-surface);
+    /* Bílé pozadí, aby se odlišila od zbytku stránky. */
     border-bottom: 1px solid var(--color-border);
-    padding: 14px 24px;
+    /* Tenká čára oddělující hlavičku od obsahu. */
+    padding: 16px 32px;
+    /* Vnitřní odsazení - víc po stranách, míň nahoře/dole. */
     display: flex;
+    /* Flexbox - umožní logo a navigaci vedle sebe. */
     align-items: center;
+    /* Svisle zarovná logo a navigaci na střed. */
     justify-content: space-between;
+    /* Logo nalevo, navigace napravo (maximální rozestup mezi nimi). */
+    position: sticky;
+    /* "Přilepí" hlavičku nahoře obrazovky i při scrollování. */
+    top: 0;
+    /* Hlavička se přilepí přesně na horní okraj okna. */
+    z-index: 10;
+    /* Zajistí, že hlavička bude vizuálně NAD ostatním obsahem. */
 }
 
 header.app-header .brand {
-    font-weight: 700;
-    font-size: 1.2rem;
-    color: var(--color-primary-dark);
+    /* Název aplikace v levé části hlavičky. */
+    font-weight: 800;
+    /* Extra tučné písmo - působí jako logo. */
+    font-size: 1.15rem;
+    /* Mírně větší než běžný text. */
+    background: var(--gradient-primary);
+    /* Nastaví gradient jako "pozadí" - v kombinaci s dalšími dvěma
+       řádky níž se ale nezobrazí jako pozadí, ale jako BARVA TEXTU. */
+    -webkit-background-clip: text;
+    background-clip: text;
+    /* "Ostříhá" gradient pozadí jen do tvaru textu (trik pro barevný text). */
+    color: transparent;
+    /* Skryje původní barvu textu, aby se projevil gradient z pozadí. */
     text-decoration: none;
+    /* Zruší podtržení odkazu. */
+    letter-spacing: -0.01em;
+    /* Mírně "sesune" písmena k sobě - jemný typografický detail. */
 }
 
 nav.app-nav a {
-    margin-left: 18px;
+    /* Odkazy v navigaci (Kurzy, Účastníci). */
+    margin-left: 22px;
+    /* Rozestup mezi jednotlivými odkazy. */
     color: var(--color-text);
+    /* Barva textu odkazu. */
     text-decoration: none;
-    font-weight: 500;
+    /* Bez podtržení. */
+    font-weight: 600;
+    /* Polotučné písmo. */
+    font-size: 0.95rem;
+    /* Mírně menší než běžný text. */
+    padding: 6px 2px;
+    /* Malé odsazení, hlavně pro budoucí hover podtržení. */
+    border-bottom: 2px solid transparent;
+    /* Průhledná spodní čára - při hover se "obarví" (viz níž), takže
+       se layout při hoveru neposkočí. */
+    transition: color 0.15s ease, border-color 0.15s ease;
+    /* Plynulý přechod barvy při najetí myší (ne skokově). */
 }
 
-nav.app-nav a:hover { color: var(--color-primary); }
+nav.app-nav a:hover {
+    /* Styl při najetí myší na odkaz. */
+    color: var(--color-primary);
+    /* Zbarví text do brand barvy. */
+    border-bottom-color: var(--color-primary);
+    /* Zbarví spodní čáru - vytvoří efekt podtržení. */
+}
+
+/* --------------------------------------------------------------------
+   Hlavní obsah stránky
+   -------------------------------------------------------------------- */
 
 main {
-    max-width: 960px;
+    /* Hlavní obsahový blok pod hlavičkou. */
+    max-width: 1000px;
+    /* Omezí maximální šířku obsahu, aby se text/karty nerozlévaly
+       do nekonečna na širokých monitorech. */
     margin: 0 auto;
-    padding: 24px 20px 60px;
+    /* Vycentruje obsah horizontálně (nahoře/dole 0, vlevo/vpravo auto). */
+    padding: 32px 20px 64px;
+    /* Vnitřní odsazení - víc dole, ať stránka "nekončí" hned pod obsahem. */
 }
 
-h1 { margin-top: 0; }
+h1 {
+    /* Hlavní nadpis stránky. */
+    margin-top: 0;
+    /* Zruší výchozí horní okraj (jinak by byl zbytečný prostor nahoře). */
+    font-size: 1.7rem;
+    /* Velikost nadpisu. */
+    font-weight: 800;
+    /* Extra tučné. */
+    letter-spacing: -0.01em;
+    /* Jemné přitažení písmen k sobě. */
+}
+
+h2 {
+    /* Podnadpisy uvnitř karet (např. "Přihlásit účastníka"). */
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-top: 0;
+}
+
+/* --------------------------------------------------------------------
+   Karty (obecný stavební blok - obaluje formuláře, sekce detailu...)
+   -------------------------------------------------------------------- */
 
 .card {
+    /* Obecná "bílá karta" s stínem - základní stavební prvek layoutu. */
+    background: var(--color-surface);
+    /* Bílé pozadí. */
+    border: 1px solid var(--color-border);
+    /* Jemné ohraničení. */
+    border-radius: var(--radius);
+    /* Zaoblené rohy. */
+    padding: 22px 24px;
+    /* Vnitřní odsazení obsahu karty. */
+    margin-bottom: 20px;
+    /* Mezera mezi kartami pod sebou. */
+    box-shadow: var(--shadow-card);
+    /* Měkký stín pro pocit "vznesení" nad pozadím. */
+}
+
+/* --------------------------------------------------------------------
+   Mřížka kurzů - kartičkový katalog nabízených kurzů
+   -------------------------------------------------------------------- */
+
+.course-grid {
+    /* Obaluje všechny kartičky kurzů na stránce se seznamem. */
+    display: grid;
+    /* CSS grid layout - automaticky rozmístí kartičky do řádků/sloupců. */
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    /* Kolik sloupců se vejde, se počítá automaticky - každá kartička
+       je alespoň 260px široká, zbytek místa se rovnoměrně rozdělí. */
+    gap: 18px;
+    /* Mezera mezi kartičkami (svisle i vodorovně). */
+}
+
+.course-card {
+    /* Jedna kartička jednoho kurzu v katalogu. */
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
     padding: 20px;
-    margin-bottom: 20px;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    /* Flexbox ve sloupci - obsah (název, badge, tlačítka) jde pod sebou. */
+    flex-direction: column;
+    gap: 12px;
+    /* Mezera mezi vnitřními blok */
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    /* Plynulý přechod při hoveru (posun + stín), ne skokový. */
 }
 
+.course-card:hover {
+    /* Efekt "nadzvednutí" kartičky při najetí myší. */
+    transform: translateY(-3px);
+    /* Posune kartičku o 3px nahoru. */
+    box-shadow: var(--shadow-card-hover);
+    /* Zvýrazní stín pod kartičkou. */
+}
+
+.course-card__top {
+    /* Horní řádek kartičky - název kurzu + kód. */
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.course-card__name {
+    /* Název kurzu v kartičce. */
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--color-text);
+    text-decoration: none;
+    /* Celý název je klikatelný odkaz na detail - bez podtržení. */
+}
+
+.course-card__name:hover {
+    color: var(--color-primary);
+    /* Při najetí myší se zbarví do brand barvy - naznačí, že je klikatelné. */
+}
+
+.course-card__code {
+    /* Kód kurzu zobrazený jako malá "pilulka" (pill). */
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    /* Velká písmena - kódy vypadají "technicky" (např. PHP-101). */
+    letter-spacing: 0.03em;
+    color: var(--color-primary-dark);
+    background: #eef0fe;
+    padding: 4px 9px;
+    border-radius: 999px;
+    /* Velmi velký poloměr = zaoblení do tvaru "pilulky". */
+    white-space: nowrap;
+    /* Nezalomí kód na dva řádky. */
+}
+
+.course-card__meta {
+    /* Řádek s datem konání (ikonka + text). */
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--color-muted);
+    font-size: 0.88rem;
+}
+
+.course-card__footer {
+    /* Spodní část kartičky - tlačítka - přilepená dolů díky
+       margin-top: auto (viz níž), i když je obsah kartiček různě dlouhý. */
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+    /* "auto" odsadí footer co nejvíc dolů uvnitř flex kontejneru se
+       sloupcovým směrem - tím se tlačítka zarovnají na spodní okraj
+       všech kartiček stejně, i když mají různě dlouhý obsah. */
+    padding-top: 6px;
+}
+
+/* --------------------------------------------------------------------
+   Obsazenost / kapacita - progress bar
+   -------------------------------------------------------------------- */
+
+.capacity-bar {
+    /* Šedý "žlab", ve kterém se zobrazuje barevné vyplnění (fill). */
+    background: var(--color-border);
+    border-radius: 999px;
+    height: 8px;
+    /* Tenký proužek. */
+    width: 100%;
+    overflow: hidden;
+    /* Schová přetékající rohy vyplnění, aby zůstalo uvnitř zaoblení. */
+    margin-top: 2px;
+}
+
+.capacity-bar-fill {
+    /* Barevné vyplnění progress baru - šířka se nastavuje inline stylem
+       přímo v šabloně (style="width: X%") podle skutečné obsazenosti. */
+    height: 100%;
+    background: var(--gradient-primary);
+    /* Gradient - vypadá "živěji" než jedna plochá barva. */
+    transition: width 0.3s ease;
+    /* Plynulá animace při změně šířky (např. po přihlášení). */
+}
+
+.capacity-bar-fill.full {
+    /* Když je kurz plně obsazen, přepne se barva na červenou (varování). */
+    background: var(--color-error-text);
+}
+
+/* --------------------------------------------------------------------
+   Tabulky (seznam účastníků, seznam přihlášených na detailu kurzu)
+   -------------------------------------------------------------------- */
+
 table {
+    /* Obecný styl tabulek v aplikaci. */
     width: 100%;
     border-collapse: collapse;
+    /* Spojí ohraničení buněk do jedné čáry (ne dvojité). */
     background: var(--color-surface);
+    border-radius: var(--radius);
+    overflow: hidden;
+    /* Umožní zaoblení rohů i u tabulky (jinak by rohy "přečuhovaly"). */
 }
 
 th, td {
+    /* Společný styl pro buňky záhlaví (th) i obsahu (td). */
     text-align: left;
-    padding: 10px 12px;
+    padding: 12px 14px;
     border-bottom: 1px solid var(--color-border);
     vertical-align: middle;
 }
 
-th { color: var(--color-muted); font-weight: 600; font-size: 0.9rem; }
+th {
+    /* Jen záhlaví tabulky. */
+    color: var(--color-muted);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    /* Velká písmena pro záhlaví - běžný vzhled datových tabulek. */
+    letter-spacing: 0.02em;
+    background: #f8f9fd;
+    /* Jemně odlišené pozadí záhlaví od obsahu. */
+}
 
-tr:last-child td { border-bottom: none; }
+tbody tr:hover {
+    /* Zvýraznění řádku tabulky při najetí myší - lepší orientace. */
+    background: #fafbff;
+}
 
-.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+tr:last-child td {
+    /* Poslední řádek tabulky nemá spodní čáru (vypadá to uhlazeněji). */
+    border-bottom: none;
+}
+
+.actions {
+    /* Kontejner pro skupinu tlačítek v řádku tabulky. */
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    /* Pokud se tlačítka nevejdou na šířku, zalomí se na další řádek. */
+}
+
+/* --------------------------------------------------------------------
+   Tlačítka
+   -------------------------------------------------------------------- */
 
 .btn {
+    /* Základní (sekundární) tlačítko - bílé s rámečkem. */
     display: inline-block;
-    padding: 8px 14px;
-    border-radius: var(--radius);
+    padding: 9px 16px;
+    border-radius: var(--radius-sm);
     border: 1px solid var(--color-border);
     background: var(--color-surface);
     color: var(--color-text);
     text-decoration: none;
     font-size: 0.9rem;
+    font-weight: 600;
     cursor: pointer;
+    /* Kurzor "ručička" i na <button>/<a>, aby bylo jasné, že je to klikatelné. */
+    transition: all 0.15s ease;
+    /* Plynulý přechod všech vlastností (barva, stín...) při hoveru. */
 }
 
-.btn:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.btn:hover {
+    /* Hover efekt běžného tlačítka. */
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    box-shadow: 0 2px 8px rgba(91, 91, 245, 0.12);
+    /* Mírný fialový stín naznačující interaktivitu. */
+}
 
 .btn-primary {
-    background: var(--color-primary);
-    border-color: var(--color-primary);
+    /* Hlavní (zvýrazněné) tlačítko - gradientové pozadí. */
+    background: var(--gradient-primary);
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(91, 91, 245, 0.25);
+}
+
+.btn-primary:hover {
+    /* Při hoveru se tlačítko mírně "nadzvedne" a ztmavne stín. */
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(91, 91, 245, 0.35);
     color: #fff;
 }
 
-.btn-primary:hover { background: var(--color-primary-dark); border-color: var(--color-primary-dark); color: #fff; }
+.btn-danger {
+    /* Tlačítko pro nebezpečné akce (smazat, zrušit). */
+    color: var(--color-error-text);
+    border-color: #f6cdd4;
+}
 
-.btn-danger { color: var(--color-error-text); border-color: var(--color-error-text); }
-.btn-danger:hover { background: var(--color-error-bg); }
+.btn-danger:hover {
+    /* Při hoveru zvýrazní červené pozadí/stín. */
+    background: var(--color-error-bg);
+    border-color: var(--color-error-text);
+    box-shadow: 0 2px 8px rgba(199, 41, 77, 0.15);
+}
 
-.btn-sm { padding: 5px 10px; font-size: 0.8rem; }
+.btn-sm {
+    /* Menší varianta tlačítka - do tabulkových řádků. */
+    padding: 6px 12px;
+    font-size: 0.8rem;
+}
 
-form.inline { display: inline; }
+form.inline {
+    /* Formulář, který se má chovat jako běžný inline prvek (vedle
+       jiných tlačítek v jedné řadě), ne jako blokový element. */
+    display: inline;
+}
 
-.form-group { margin-bottom: 16px; }
-.form-group label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.9rem; }
+/* --------------------------------------------------------------------
+   Formuláře
+   -------------------------------------------------------------------- */
+
+.form-group {
+    /* Jeden "blok" formuláře = popisek (label) + vstupní pole. */
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    /* Popisek nad vstupním polem. */
+    display: block;
+    /* Na vlastním řádku (ne vedle inputu). */
+    font-weight: 600;
+    margin-bottom: 7px;
+    font-size: 0.88rem;
+    color: var(--color-text);
+}
+
 .form-group input, .form-group select {
+    /* Společný styl textových polí, number/date/email inputů a selectů. */
     width: 100%;
-    padding: 9px 10px;
+    padding: 10px 12px;
     border: 1px solid var(--color-border);
-    border-radius: var(--radius);
+    border-radius: var(--radius-sm);
     font-size: 1rem;
+    font-family: inherit;
+    /* Zajistí, že input/select použije stejný font jako zbytek stránky
+       (prohlížeče jim jinak dávají vlastní systémový font). */
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-group input:focus, .form-group select:focus {
+    /* Styl při aktivním zaměření pole (klik/tab do pole). */
+    outline: none;
+    /* Zruší výchozí (často neladící) modrý obrys prohlížeče. */
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(91, 91, 245, 0.15);
+    /* Vlastní "obrys" ve tvaru jemné fialové svatozáře - pořád vidíme,
+       které pole je aktivní, ale lépe to ladí s designem. */
 }
 
 .filters {
+    /* Panel filtrů nad seznamem kurzů. */
     display: flex;
-    gap: 14px;
+    gap: 16px;
     align-items: end;
+    /* Zarovná vstupní pole a tlačítko "Filtrovat" na spodní hranu
+       (i když má label jiný počet řádků). */
     flex-wrap: wrap;
+    /* Na malé obrazovce se filtry zalomí pod sebe. */
     margin-bottom: 20px;
 }
 
-.filters .form-group { margin-bottom: 0; min-width: 160px; }
+.filters .form-group {
+    /* V rámci filtrů potřebujeme jiné odsazení než ve formulářích. */
+    margin-bottom: 0;
+    min-width: 160px;
+}
 
-.checkbox-row { display: flex; align-items: center; gap: 8px; }
-.checkbox-row input { width: auto; }
+.checkbox-row {
+    /* Řádek s checkboxem a popiskem vedle sebe (ne nad sebou). */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.checkbox-row input {
+    /* Checkbox nemá být roztažený na 100% šířky jako textová pole. */
+    width: auto;
+}
+
+/* --------------------------------------------------------------------
+   Hlášky (flash zprávy) a chybové výpisy
+   -------------------------------------------------------------------- */
 
 .alert {
-    padding: 12px 16px;
-    border-radius: var(--radius);
-    margin-bottom: 16px;
+    /* Obecný box pro flash zprávu (success/error). */
+    padding: 13px 18px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 18px;
     font-size: 0.95rem;
+    font-weight: 500;
 }
-.alert-success { background: var(--color-success-bg); color: var(--color-success-text); }
-.alert-error { background: var(--color-error-bg); color: var(--color-error-text); }
 
-.errors { background: var(--color-error-bg); color: var(--color-error-text); border-radius: var(--radius); padding: 12px 16px; margin-bottom: 16px; }
-.errors ul { margin: 0; padding-left: 18px; }
+.alert-success {
+    /* Zelená varianta - úspěšná akce. */
+    background: var(--color-success-bg);
+    color: var(--color-success-text);
+}
+
+.alert-error {
+    /* Červená varianta - chyba (např. kapacita plná, duplicitní přihláška). */
+    background: var(--color-error-bg);
+    color: var(--color-error-text);
+}
+
+.errors {
+    /* Box s výpisem všech validačních chyb nad formulářem. */
+    background: var(--color-error-bg);
+    color: var(--color-error-text);
+    border-radius: var(--radius-sm);
+    padding: 14px 18px;
+    margin-bottom: 18px;
+}
+
+.errors ul {
+    /* Seznam jednotlivých chybových hlášek uvnitř boxu. */
+    margin: 0;
+    padding-left: 20px;
+}
+
+/* --------------------------------------------------------------------
+   Badge (malé barevné "štítky" pro stav přihlášky/obsazenost)
+   -------------------------------------------------------------------- */
 
 .badge {
+    /* Základní vzhled štítku - pilulka s textem. */
     display: inline-block;
-    padding: 2px 10px;
+    padding: 3px 11px;
     border-radius: 999px;
-    font-size: 0.8rem;
-    font-weight: 600;
+    font-size: 0.78rem;
+    font-weight: 700;
 }
-.badge-enrolled { background: var(--color-success-bg); color: var(--color-success-text); }
-.badge-cancelled { background: var(--color-error-bg); color: var(--color-error-text); }
-.badge-completed { background: #e4e9f7; color: #33409c; }
 
-.capacity-bar {
-    background: var(--color-border);
-    border-radius: 999px;
-    height: 10px;
-    width: 100%;
-    overflow: hidden;
-    margin-top: 6px;
+.badge-enrolled {
+    /* Stav "přihlášen" / "volná místa" - zelená. */
+    background: var(--color-success-bg);
+    color: var(--color-success-text);
 }
-.capacity-bar-fill { height: 100%; background: var(--color-primary); }
-.capacity-bar-fill.full { background: var(--color-error-text); }
 
-.muted { color: var(--color-muted); font-size: 0.9rem; }
+.badge-cancelled {
+    /* Stav "zrušeno" / "plno" - červená. */
+    background: var(--color-error-bg);
+    color: var(--color-error-text);
+}
+
+.badge-completed {
+    /* Stav "absolvováno" - fialová. */
+    background: var(--color-completed-bg);
+    color: var(--color-completed-text);
+}
+
+/* --------------------------------------------------------------------
+   Drobnosti
+   -------------------------------------------------------------------- */
+
+.muted {
+    /* Podružný, méně výrazný text (vysvětlivky, prázdné stavy). */
+    color: var(--color-muted);
+    font-size: 0.9rem;
+}
 
 .page-header {
+    /* Řádek s nadpisem stránky a hlavním tlačítkem akce (např. "+ Nový kurz"). */
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     gap: 12px;
+    margin-bottom: 20px;
 }
 
-.empty-state { color: var(--color-muted); padding: 24px; text-align: center; }
+.empty-state {
+    /* Zpráva zobrazená, když seznam (kurzů/účastníků) je prázdný. */
+    color: var(--color-muted);
+    padding: 40px 20px;
+    text-align: center;
+    font-size: 0.95rem;
+}
